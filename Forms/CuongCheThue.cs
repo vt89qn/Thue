@@ -379,7 +379,7 @@ public partial class CuongCheThue : Form
 				});
 			}
 		});
-		await page.GotoAsync("https://web.gdt.gov.vn/wps/portal/Home/nt/cc");
+		await page.GotoAsync("https://web.gdt.gov.vn/wps/portal/Home/nt/cc", new() { Timeout = 5000 });
 		byte[] screenshot = await page.Locator("#layoutContainers").ScreenshotAsync(new() { Type = ScreenshotType.Png });
 		await page.CloseAsync();
 		return screenshot;

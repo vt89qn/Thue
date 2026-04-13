@@ -136,7 +136,7 @@
 			txtThreadCount.Name = "txtThreadCount";
 			txtThreadCount.Size = new Size(45, 23);
 			txtThreadCount.TabIndex = 3;
-			txtThreadCount.Text = "1";
+			txtThreadCount.Text = "3";
 			// 
 			// statusStrip1
 			// 

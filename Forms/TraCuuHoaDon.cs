@@ -365,7 +365,7 @@ public partial class TraCuuHoaDon : Form
 				}
 			}
 		});
-		await page.GotoAsync("https://hoadondientu.gdt.gov.vn");
+		await page.GotoAsync("https://hoadondientu.gdt.gov.vn", new() { Timeout = 5000 });
 		await page.TryClickAsync("button[type='button'][aria-label='Close'].ant-modal-close");
 		await page.TryFillAsync("#nbmst", model.MstNguoiBan);
 		await page.Locator("#lhdon div.ant-select-selection-selected-value span").EvaluateAsync($"el => el.innerText = '{model.LoaiHoaDon}'");

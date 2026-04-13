@@ -8,6 +8,15 @@ predictors = None
 MODEL_PATH = Path(__file__).resolve().parent / "model" / "thue"
 
 
+def initialize():
+    gpus = tf.config.list_physical_devices('GPU')
+    if gpus:
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+    model, _, _, _ = get_model()
+    get_predictor(model)
+
+
 def ocr(img_bytes=None, img_np=None):
     model, width, height, num_to_char = get_model()
     predict = get_predictor(model)

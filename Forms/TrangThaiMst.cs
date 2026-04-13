@@ -357,7 +357,7 @@ public partial class TrangThaiMst : Form
 				});
 			}
 		});
-		await page.GotoAsync("https://tracuunnt.gdt.gov.vn/tcnnt/mstdn.jsp");
+		await page.GotoAsync("https://tracuunnt.gdt.gov.vn/tcnnt/mstdn.jsp", new() { Timeout = 5000 });
 		byte[] screenshot = await page.Locator("#left").ScreenshotAsync(new() { Type = ScreenshotType.Png });
 
 		await page.CloseAsync();
