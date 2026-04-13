@@ -14,4 +14,4 @@ app = FastAPI()
 @app.post("/captcha-ocr")
 def api_image_ocr(postData: ApiPredictRequestModel):
     img_bytes = base64.b64decode(postData.body)
-    return  ocr(img_bytes=img_bytes)
+    return ocr(img_bytes=img_bytes)

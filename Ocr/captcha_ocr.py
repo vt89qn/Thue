@@ -1,10 +1,14 @@
-import tensorflow as tf, numpy as np, os
+from pathlib import Path
+
+import numpy as np
+import tensorflow as tf
 
 model_data = None
 predictors = None
+MODEL_PATH = Path(__file__).resolve().parent / "model" / "thue"
 
 
-async def ocr(img_bytes=None, img_np=None):
+def ocr(img_bytes=None, img_np=None):
     model, width, height, num_to_char = get_model()
     predict = get_predictor(model)
 
@@ -16,12 +20,13 @@ async def ocr(img_bytes=None, img_np=None):
 
 
 def get_model():
+    global model_data
+
     if model_data is None:
-        model_path = "./model/thue"
-        if not os.path.isdir(model_path):
+        if not MODEL_PATH.is_dir():
             raise ValueError("wrong [app]")
 
-        model = tf.keras.models.load_model(model_path)
+        model = tf.keras.models.load_model(str(MODEL_PATH))
         configs = model.get_layer(name="ctc_loss").get_config()
 
         model = tf.keras.models.Model(
@@ -57,6 +62,8 @@ def get_model():
 
 
 def get_predictor(model):
+    global predictors
+
     if predictors is None:
         @tf.function
         def compiled_predict(inputs):
@@ -83,10 +90,7 @@ def preprocess(img_bytes, img_np, width, height):
 
 def postprocess(pred, num_to_char):
     input_len = np.ones(pred.shape[0]) * pred.shape[1]
-    results = tf.keras.backend.ctc_decode(pred, input_length=input_len, greedy=True)[0][
-        0
-    ]
-    # Iterate over the results and get back the text
+    results = tf.keras.backend.ctc_decode(pred, input_length=input_len, greedy=True)[0][0]
     output_text = []
     for res in results:
         res = tf.strings.reduce_join(num_to_char(res)).numpy().decode("utf-8")
