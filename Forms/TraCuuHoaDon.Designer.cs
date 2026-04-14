@@ -40,6 +40,7 @@
 			txtThreadCount = new TextBox();
 			statusStrip1 = new StatusStrip();
 			lblStatus = new ToolStripStatusLabel();
+			chkOcrOnline = new CheckBox();
 			toolStrip1.SuspendLayout();
 			groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)dataGrid).BeginInit();
@@ -153,11 +154,22 @@
 			lblStatus.Size = new Size(39, 17);
 			lblStatus.Text = "Status";
 			// 
+			// chkOcrOnline
+			// 
+			chkOcrOnline.AutoSize = true;
+			chkOcrOnline.Location = new Point(340, 46);
+			chkOcrOnline.Name = "chkOcrOnline";
+			chkOcrOnline.Size = new Size(83, 19);
+			chkOcrOnline.TabIndex = 5;
+			chkOcrOnline.Text = "Ocr Online";
+			chkOcrOnline.UseVisualStyleBackColor = true;
+			// 
 			// TraCuuHoaDon
 			// 
 			AutoScaleDimensions = new SizeF(7F, 15F);
 			AutoScaleMode = AutoScaleMode.Font;
 			ClientSize = new Size(1264, 561);
+			Controls.Add(chkOcrOnline);
 			Controls.Add(statusStrip1);
 			Controls.Add(txtThreadCount);
 			Controls.Add(label2);
@@ -191,5 +203,6 @@
 		private TextBox txtThreadCount;
 		private StatusStrip statusStrip1;
 		private ToolStripStatusLabel lblStatus;
+		private CheckBox chkOcrOnline;
 	}
 }

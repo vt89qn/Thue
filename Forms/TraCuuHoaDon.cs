@@ -24,9 +24,9 @@ public partial class TraCuuHoaDon : Form
 
 	private readonly ILogger logger;
 
-	string excelFilePath = string.Empty;
-	const string ExcelSheetName = "HOA DON";
-	const string ScreenshotFolderName = "screenshot_tchd";
+	private string excelFilePath = string.Empty;
+	private string excelSheetName = "HOA DON";
+	private readonly string screenshotFolderName = "screenshot_tchd";
 
 	public TraCuuHoaDon(ILogger<TraCuuHoaDon> logger)
 	{
@@ -38,7 +38,26 @@ public partial class TraCuuHoaDon : Form
 	{
 		base.OnLoad(e);
 		this.btnStartStop.Enabled = false;
-		this.lblStatus.Text = $"Import file excel có sheet [{ExcelSheetName}] để bắt đầu";
+
+		if (int.TryParse(Program.Params["thread"], out var threadCount) && threadCount > 0)
+		{
+			txtThreadCount.Text = threadCount.ToString();
+		}
+		if (int.TryParse(Program.Params["retry"], out var retryOnError) && retryOnError >= 0)
+		{
+			txtRetryOnError.Text = retryOnError.ToString();
+		}
+		if (Program.Params["ocr"] == "online")
+		{
+			chkOcrOnline.Checked = true;
+		}
+		if (Program.Params["sheet"] is string sheetName)
+		{
+			excelSheetName = sheetName;
+		}
+
+		this.lblStatus.Text = $"Import file excel có sheet [{excelSheetName}] để bắt đầu";
+
 	}
 	protected override async void OnFormClosing(FormClosingEventArgs e)
 	{
@@ -120,10 +139,10 @@ public partial class TraCuuHoaDon : Form
 		excelFilePath = ofd.FileName;
 		using var package = new ExcelPackage(new FileInfo(excelFilePath));
 
-		var workSheet = package.Workbook.Worksheets.FirstOrDefault(x => x.Name.Equals(ExcelSheetName, StringComparison.OrdinalIgnoreCase));
+		var workSheet = package.Workbook.Worksheets.FirstOrDefault(x => x.Name.Equals(excelSheetName, StringComparison.OrdinalIgnoreCase));
 		if (workSheet == null)
 		{
-			MessageBox.Show($"Không tìm thấy sheet có tên [{ExcelSheetName}]", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			MessageBox.Show($"Không tìm thấy sheet có tên [{excelSheetName}]", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			return;
 		}
 
@@ -249,7 +268,7 @@ public partial class TraCuuHoaDon : Form
 
 				var processedBytes = bytes;
 				model.Info = $"{i} | Đang ocr captcha...";
-				var captchaText = await Captcha.OcrAsync(processedBytes.ToBase64(), ct);
+				var captchaText = await (chkOcrOnline.Checked ? Captcha.OcrOnlineAsync(processedBytes.ToBase64(), ct) : Captcha.OcrLocalAsync(processedBytes.ToBase64(), ct));
 				captchaText = Regex.Replace(captchaText ?? "", @"[^a-zA-Z0-9]", "");
 				if (captchaText?.Length != 6)
 				{
@@ -283,7 +302,7 @@ public partial class TraCuuHoaDon : Form
 
 				model.Info = $"{i} | Đang chụp ảnh màn  hình...";
 				var extractRes = await ExtractResult(model, resCaptcha, queryResult, ct);
-				var screenshotPath = Path.Combine(Path.GetDirectoryName(excelFilePath), ScreenshotFolderName);
+				var screenshotPath = Path.Combine(Path.GetDirectoryName(excelFilePath), screenshotFolderName);
 				if (!Directory.Exists(screenshotPath))
 				{
 					Directory.CreateDirectory(screenshotPath);
@@ -295,7 +314,7 @@ public partial class TraCuuHoaDon : Form
 				model.Info = $"Hoàn thành";
 				model.IsSuccess = true;
 				model.IsPendingSave = true;
-				model.ScreenShot = $"{ScreenshotFolderName}/{fileName}";
+				model.ScreenShot = $"{screenshotFolderName}/{fileName}";
 				return;
 			}
 			catch (OperationCanceledException)
@@ -405,10 +424,10 @@ public partial class TraCuuHoaDon : Form
 			}
 			//ghi file excel sau khi chạy xong
 			using var package = new ExcelPackage(new FileInfo(excelFilePath));
-			var workSheet = package.Workbook.Worksheets.FirstOrDefault(x => x.Name.Equals(ExcelSheetName, StringComparison.OrdinalIgnoreCase));
+			var workSheet = package.Workbook.Worksheets.FirstOrDefault(x => x.Name.Equals(excelSheetName, StringComparison.OrdinalIgnoreCase));
 			if (workSheet == null)
 			{
-				MessageBox.Show($"Không tìm thấy sheet có tên '{ExcelSheetName}'", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show($"Không tìm thấy sheet có tên '{excelSheetName}'", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				return;
 			}
 			//ghi header

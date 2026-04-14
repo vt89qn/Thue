@@ -10,14 +10,13 @@ static class Program
 {
 	public static Dictionary<string, string> ConfigDlls { get; set; }
 	public static NameValueCollection Params { get; set; }
-	static string PlaywrightPath;
 
 	[STAThread]
 	static void Main(string[] args)
 	{
 		try
 		{
-			var startParams = GetParameters(args);
+			Params = GetParameters(args);
 			ExcelPackage.License.SetNonCommercialPersonal("tchd");
 			if (Helpers.IsDebug)
 			{
@@ -32,7 +31,7 @@ static class Program
 
 			if (Helpers.IsDebug)
 			{
-				startParams["ac"] = "cct";
+				Params["ac"] = "cct";
 			}
 
 			var services = new ServiceCollection();
@@ -41,7 +40,7 @@ static class Program
 
 			ApplicationConfiguration.Initialize();
 
-			string act = (startParams["ac"] ?? string.Empty).ToLower();
+			string act = (Params["ac"] ?? string.Empty).ToLower();
 
 			Type formType = null;
 			if (act == "tthd" || act == "tracuuhoadon")
