@@ -25,6 +25,6 @@ def api_image_ocr(postData: ApiPredictRequestModel):
     return ocr(img_bytes=img_bytes)
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="127.0.0.1", port=3123)
+    uvicorn.run(app, host="0.0.0.0", port=3123)
 
 #chạy bằng lệnh: python .\server.py
