@@ -1,0 +1,1 @@
+dotnet publish ./Thue.csproj -c Release -r win-x64 -o ../Publish

@@ -10,6 +10,7 @@ static class Program
 {
 	public static Dictionary<string, string> ConfigDlls { get; set; }
 	public static NameValueCollection Params { get; set; }
+	static string PlaywrightPath;
 
 	[STAThread]
 	static void Main(string[] args)
@@ -18,7 +19,15 @@ static class Program
 		{
 			var startParams = GetParameters(args);
 			ExcelPackage.License.SetNonCommercialPersonal("tchd");
-			SystemConst.ROOT_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Thue");
+			if (Helpers.IsDebug)
+			{
+				SystemConst.ROOT_PATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "Thue");
+			}
+			else
+			{
+				SystemConst.ROOT_PATH = AppDomain.CurrentDomain.BaseDirectory;
+			}
+
 			if (ConfigDlls == null) AppDomain.CurrentDomain.AssemblyResolve += AssemblyResolve;
 
 			if (Helpers.IsDebug)
